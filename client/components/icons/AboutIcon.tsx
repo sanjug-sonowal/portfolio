@@ -1,0 +1,24 @@
+import type { IconProps } from "./IconProps";
+
+export function AboutIcon({ className = "", size = 20, color = "#3B82F6" }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"
+        fill={color}
+      />
+      <path
+        d="M12 14C7.58172 14 4 16.6863 4 20V22H20V20C20 16.6863 16.4183 14 12 14Z"
+        fill={color}
+      />
+    </svg>
+  );
+}
+
