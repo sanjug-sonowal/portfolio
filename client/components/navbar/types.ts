@@ -1,10 +1,10 @@
 import type { IconProps } from "../icons/IconProps";
-import type { React.ComponentType } from "react";
+import type { ComponentType } from "react";
 
 export interface NavItemConfig {
   id: string;
   label: string;
-  icon: React.ComponentType<IconProps>;
+  icon: ComponentType<IconProps>;
   type?: "regular" | "toggle";
   activeBackgroundColor?: string;
   iconColor?: string;

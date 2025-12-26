@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { ProfileCard } from "@/components/profile";
 import { LeetCodeBanner } from "@/components/leetcode-banner";
@@ -15,12 +16,24 @@ import { ToolsSection } from "@/components/tools";
 import { HeatMap } from "@/components/heatmap";
 import { Footer } from "@/components/footer";
 import { Sidebar, getSidebarTitle, renderSidebarContent } from "@/components/sidebar";
+import { ProblemSubmissionsList } from "@/components/problem-solving/ProblemSubmissionsList";
+import type { ProblemSubmission } from "@/components/problem-solving/types";
 
 export default function Home() {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<string>("");
+  const [isHeatmapSidebarOpen, setIsHeatmapSidebarOpen] = useState(false);
+  const [hoveredDate, setHoveredDate] = useState<string>("");
+  const [problemSubmissions] = useState<ProblemSubmission[]>([]);
 
   const handleItemClick = (itemId: string) => {
+    // Handle login navigation
+    if (itemId === "login") {
+      router.push("/login");
+      return;
+    }
+
     const sidebarItems = ["certificates", "skills", "technical-skills"];
     
     if (sidebarItems.includes(itemId)) {
@@ -57,6 +70,28 @@ export default function Home() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedItem("");
+  };
+
+  const handleDayClick = (date: string) => {
+    setHoveredDate(date);
+    setIsHeatmapSidebarOpen(true);
+  };
+
+  const handleCloseHeatmapSidebar = () => {
+    setIsHeatmapSidebarOpen(false);
+    setHoveredDate("");
+  };
+
+  const submissionsForDate = problemSubmissions.filter((submission) => submission.date === hoveredDate);
+
+  const formatDateTitle = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
   return (
@@ -97,7 +132,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <HeatMap />
+            <HeatMap onDayClick={handleDayClick} />
             <Footer />
           </div>
         </div>
@@ -108,6 +143,19 @@ export default function Home() {
         onClose={handleCloseModal}
         title={selectedItem ? getSidebarTitle(selectedItem) : ""}
         content={selectedItem ? renderSidebarContent(selectedItem) : null}
+        position="right"
+      />
+
+      <Sidebar
+        isOpen={isHeatmapSidebarOpen}
+        onClose={handleCloseHeatmapSidebar}
+        title={hoveredDate ? formatDateTitle(hoveredDate) : ""}
+        content={
+          hoveredDate ? (
+            <ProblemSubmissionsList date={hoveredDate} submissions={submissionsForDate} />
+          ) : null
+        }
+        position="left"
       />
     </div>
   );

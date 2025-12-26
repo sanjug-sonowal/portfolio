@@ -14,9 +14,7 @@ export function Navbar({
   const items = navConfig;
   const [activeId, setActiveId] = useState(activeItemId);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [toggleStates, setToggleStates] = useState<Record<string, boolean>>({
-    "ai-engineer": true,
-  });
+  const [toggleStates, setToggleStates] = useState<Record<string, boolean>>({});
 
   const handleItemClick = (itemId: string) => {
     setActiveId(itemId);

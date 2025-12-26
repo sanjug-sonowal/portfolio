@@ -3,7 +3,13 @@
 import type { SidebarProps } from "./types";
 import { TYPOGRAPHY } from "@/constants/typography";
 
-export function Sidebar({ isOpen, onClose, title, content }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, title, content, position = "right" }: SidebarProps) {
+  const isLeft = position === "left";
+  const transformClass = isLeft
+    ? isOpen ? "sidebar-bounce-left" : "-translate-x-full transition-transform duration-300 ease-in-out"
+    : isOpen ? "sidebar-bounce" : "translate-x-full transition-transform duration-300 ease-in-out";
+  const positionClass = isLeft ? "left-0" : "right-0";
+
   return (
     <>
       <div
@@ -13,9 +19,9 @@ export function Sidebar({ isOpen, onClose, title, content }: SidebarProps) {
         onClick={onClose}
       />
       <div
-        className={`fixed top-0 right-0 h-full w-[80%] bg-white shadow-xl z-50 ${
-          isOpen ? "sidebar-bounce" : "translate-x-full transition-transform duration-300 ease-in-out"
-        } ${!isOpen ? "pointer-events-none" : ""}`}
+        className={`fixed top-0 ${positionClass} h-full w-[80%] bg-white shadow-xl z-50 ${transformClass} ${
+          !isOpen ? "pointer-events-none" : ""
+        }`}
       >
         <div className="p-6 h-full overflow-y-auto">
           <div className="flex items-center justify-between mb-4">

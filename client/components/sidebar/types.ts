@@ -5,5 +5,6 @@ export interface SidebarProps {
   onClose: () => void;
   title: string;
   content: ReactNode;
+  position?: "left" | "right";
 }
 

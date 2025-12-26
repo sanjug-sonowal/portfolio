@@ -8,18 +8,10 @@ import { ProblemSolvingIcon } from "../icons/ProblemSolvingIcon";
 import { TrophyIcon } from "../icons/TrophyIcon";
 import { EducationIcon } from "../icons/EducationIcon";
 import { CertificatesIcon } from "../icons/CertificatesIcon";
+import { LoginIcon } from "../icons/LoginIcon";
 import type { NavItemConfig } from "./types";
 
 export const navConfig: NavItemConfig[] = [
-  {
-    id: "ai-engineer",
-    label: "AI Engineer",
-    icon: () => null,
-    type: "toggle",
-    activeBackgroundColor: "#FFF5E6",
-    iconColor: "#F97316",
-    textColor: "#F97316",
-  },
   {
     id: "about",
     label: "About",
@@ -77,6 +69,13 @@ export const navConfig: NavItemConfig[] = [
     icon: CertificatesIcon,
     type: "regular",
     iconColor: "#EC4899",
+  },
+  {
+    id: "login",
+    label: "Login",
+    icon: LoginIcon,
+    type: "regular",
+    iconColor: "#6366F1",
   },
 ];
 
