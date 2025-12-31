@@ -1,0 +1,13 @@
+spring.datasource.url=${DB_URL:jdbc:postgresql://portfolio-dev.c9aqko2eswjy.ap-south-1.rds.amazonaws.com:5432/portfolio_dev}
+spring.datasource.username=${DB_USERNAME:portfoliodb}
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=true
+spring.h2.console.enabled=false
+
+jwt.secret=${JWT_SECRET}
+jwt.expiration=${JWT_EXPIRATION:86400000}
+

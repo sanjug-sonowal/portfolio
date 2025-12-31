@@ -58,3 +58,9 @@ server/.mvn/
 *.war
 !server/.gitkeep
 
+# Spring Boot configuration files with sensitive data
+server/src/main/resources/application-prod.properties
+server/src/main/resources/application-production.properties
+**/application-*.local.properties
+**/application-local.properties
+
