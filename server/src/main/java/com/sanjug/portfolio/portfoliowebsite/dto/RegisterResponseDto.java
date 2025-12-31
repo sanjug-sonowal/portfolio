@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisterResponseDto {
-    private String token;
-    private String email;
-    private String name;
+    private String status;
+    private Integer statusCode;
+    private String message;
     private LocalDateTime timestamp;
 }
 

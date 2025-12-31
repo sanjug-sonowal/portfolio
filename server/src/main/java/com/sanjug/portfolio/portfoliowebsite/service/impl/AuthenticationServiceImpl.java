@@ -5,7 +5,9 @@ import com.sanjug.portfolio.portfoliowebsite.dto.LoginRequestDto;
 import com.sanjug.portfolio.portfoliowebsite.dto.LoginResponseDto;
 import com.sanjug.portfolio.portfoliowebsite.dto.RegisterRequestDto;
 import com.sanjug.portfolio.portfoliowebsite.dto.RegisterResponseDto;
+import com.sanjug.portfolio.portfoliowebsite.dto.UserDto;
 import com.sanjug.portfolio.portfoliowebsite.entity.User;
+import com.sanjug.portfolio.portfoliowebsite.exception.DuplicateEmailException;
 import com.sanjug.portfolio.portfoliowebsite.repository.UserRepository;
 import com.sanjug.portfolio.portfoliowebsite.service.AuthenticationService;
 import com.sanjug.portfolio.portfoliowebsite.service.JwtService;
@@ -37,10 +39,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         validateEmailNotExists(request.getEmail());
         String encodedPassword = encodePassword(request.getPassword());
         User user = createUser(request, encodedPassword);
-        User savedUser = userRepository.save(user);
-        String token = jwtService.generateToken(savedUser.getEmail(), savedUser.getId());
+        userRepository.save(user);
         
-        return buildRegisterResponse(savedUser, token);
+        return buildRegisterResponse();
     }
     
     private User findUserByEmail(String email) {
@@ -50,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     
     private void validateEmailNotExists(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new RuntimeException(AuthConstants.EMAIL_ALREADY_EXISTS);
+            throw new DuplicateEmailException(AuthConstants.EMAIL_ALREADY_EXISTS);
         }
     }
     
@@ -82,19 +83,42 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
     
     private LoginResponseDto buildLoginResponse(User user, String token) {
+        UserDto userDto = buildUserDto(user);
+        
         return LoginResponseDto.builder()
+                .status("success")
+                .statusCode(200)
+                .message(AuthConstants.LOGIN_SUCCESS)
                 .token(token)
-                .email(user.getEmail())
-                .name(user.getName())
+                .user(userDto)
                 .timestamp(LocalDateTime.now())
                 .build();
     }
     
-    private RegisterResponseDto buildRegisterResponse(User user, String token) {
-        return RegisterResponseDto.builder()
-                .token(token)
+    private UserDto buildUserDto(User user) {
+        return UserDto.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
+                .phone(user.getPhone())
+                .jobTitle(user.getJobTitle())
+                .bio(user.getBio())
+                .linkedinUrl(user.getLinkedinUrl())
+                .githubUrl(user.getGithubUrl())
+                .leetcodeUrl(user.getLeetcodeUrl())
+                .interviewReady(user.getInterviewReady())
+                .immediateJoiner(user.getImmediateJoiner())
+                .openToWork(user.getOpenToWork())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
+    }
+    
+    private RegisterResponseDto buildRegisterResponse() {
+        return RegisterResponseDto.builder()
+                .status("success")
+                .statusCode(201)
+                .message(AuthConstants.REGISTRATION_SUCCESS)
                 .timestamp(LocalDateTime.now())
                 .build();
     }

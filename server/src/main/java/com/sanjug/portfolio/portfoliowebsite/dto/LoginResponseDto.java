@@ -14,9 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginResponseDto {
+    private String status;
+    private Integer statusCode;
+    private String message;
     private String token;
-    private String email;
-    private String name;
+    private UserDto user;
     private LocalDateTime timestamp;
 }
 

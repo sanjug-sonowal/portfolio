@@ -1,9 +1,11 @@
 package com.sanjug.portfolio.portfoliowebsite.exception;
 
+import com.sanjug.portfolio.portfoliowebsite.constants.AuthConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -28,7 +30,8 @@ public class GlobalExceptionHandler {
         });
         
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
+                .status("error")
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .message("Validation failed")
                 .errors(errors)
                 .timestamp(LocalDateTime.now())
@@ -37,10 +40,42 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
     
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateEmailException(DuplicateEmailException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status("error")
+                .statusCode(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+    
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        String errorMessage = ex.getMessage();
+        if (errorMessage != null && (errorMessage.contains("email") || errorMessage.contains("duplicate"))) {
+            errorMessage = AuthConstants.EMAIL_ALREADY_EXISTS;
+        } else {
+            errorMessage = "Data integrity violation";
+        }
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status("error")
+                .statusCode(HttpStatus.CONFLICT.value())
+                .message(errorMessage)
+                .timestamp(LocalDateTime.now())
+                .build();
+        
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+    
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .status(HttpStatus.UNAUTHORIZED.value())
+                .status("error")
+                .statusCode(HttpStatus.UNAUTHORIZED.value())
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -53,7 +88,8 @@ public class GlobalExceptionHandler {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ErrorResponse {
-        private int status;
+        private String status;
+        private Integer statusCode;
         private String message;
         private Map<String, String> errors;
         private LocalDateTime timestamp;
