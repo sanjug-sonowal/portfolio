@@ -16,12 +16,14 @@ import { CertificatesIcon } from "../../icons/CertificatesIcon";
 import { ToolsIcon } from "../../icons/ToolsIcon";
 import { BadgesIcon } from "../../icons/BadgesIcon";
 import { useSidebar } from "../context/SidebarContext";
+import { useAuth } from "@/hooks/useAuth";
 import type { SidebarMenuItem } from "../types";
 
 export function AdminSidebar() {
   const { isExpanded, toggleSidebar } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuth();
 
   const menuItems: SidebarMenuItem[] = [
     {
@@ -111,6 +113,7 @@ export function AdminSidebar() {
   ];
 
   const handleLogout = () => {
+    logout();
     router.push("/login");
   };
 

@@ -1,12 +1,8 @@
 "use client";
 
 import { AdminSidebar, SidebarProvider, useSidebar } from "@/components/admin";
+import { ProtectedRoute } from "@/components/auth";
 
-/**
- * Admin Layout Content Component
- * 
- * Single Responsibility: Renders layout content with dynamic sidebar spacing
- */
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { isExpanded } = useSidebar();
 
@@ -25,21 +21,17 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-/**
- * Admin Layout Component
- * 
- * Single Responsibility: Provides layout structure for admin pages with sidebar context
- * Follows layout pattern from Next.js App Router
- */
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <SidebarProvider>
-      <AdminLayoutContent>{children}</AdminLayoutContent>
-    </SidebarProvider>
+    <ProtectedRoute>
+      <SidebarProvider>
+        <AdminLayoutContent>{children}</AdminLayoutContent>
+      </SidebarProvider>
+    </ProtectedRoute>
   );
 }
 

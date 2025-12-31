@@ -1,34 +1,30 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect } from "react";
 import { LoginForm } from "@/components/auth";
+import { useAuth } from "@/hooks/useAuth";
 import type { LoginFormData } from "@/components/auth/types";
 
-/**
- * Login Page Component
- * 
- * Single Responsibility: Renders the login page UI and handles navigation
- */
 export default function LoginPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, isLoading, error, clearError, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated && !error && !isLoading) {
+      router.push("/admin/dashboard");
+    }
+  }, [isAuthenticated, error, isLoading, router]);
 
   const handleLogin = async (data: LoginFormData) => {
-    setIsLoading(true);
-    
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    // Navigate to dashboard (no actual authentication for now)
-    router.push("/admin/dashboard");
+    clearError();
+    await login(data);
   };
 
   return (
     <div className="min-h-screen bg-[#FEFBF6] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md animate-fade-in">
         <div className="bg-white/30 backdrop-blur-sm rounded-2xl border border-white/30 shadow-xl p-8 space-y-8">
-          {/* Header */}
           <div className="text-center space-y-3">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-lg">
               <svg
@@ -48,10 +44,14 @@ export default function LoginPage() {
             <p className="text-gray-600">Sign in to access your dashboard</p>
           </div>
 
-          {/* Form */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              <p className="text-sm font-medium">{error}</p>
+            </div>
+          )}
+
           <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
 
-          {/* Footer */}
           <div className="text-center text-sm text-gray-500">
             <p>Don&apos;t have an account? Contact administrator</p>
           </div>
