@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Portfolio Website API Lambda Function
+
+Globals:
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'http://localhost:3000,https://flowmatrixinnovations.com,https://www.flowmatrixinnovations.com'"
+      AllowCredentials: true
+
+Resources:
+  PortfolioApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: portfolio-backend-api
+      Handler: com.sanjug.portfolio.portfoliowebsite.StreamLambdaHandler::handleRequest
+      Runtime: java17
+      CodeUri: .
+      Timeout: 300
+      MemorySize: 2048
+      SnapStart:
+        ApplyOn: PublishedVersions
+      Environment:
+        Variables:
+          DB_URL: !Ref DatabaseUrl
+          DB_USERNAME: !Ref DatabaseUsername
+          DB_PASSWORD: !Ref DatabasePassword
+          DB_DRIVER: org.postgresql.Driver
+          DB_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+          JWT_SECRET: !Ref JwtSecret
+          SPRING_PROFILES_ACTIVE: prod
+      Events:
+        ApiGateway:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref ServerlessRestApi
+        ApiGatewayRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+            RestApiId: !Ref ServerlessRestApi
+
+Parameters:
+  DatabaseUrl:
+    Type: String
+    Description: Database connection URL
+    # Default removed - set via parameter_overrides or environment variables
+  DatabaseUsername:
+    Type: String
+    Description: Database username
+  DatabasePassword:
+    Type: String
+    NoEcho: true
+    Description: Database password
+  JwtSecret:
+    Type: String
+    NoEcho: true
+    Description: JWT secret key
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway REST API endpoint URL (default)
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Stage'
+  
+  ApiCustomDomainUrl:
+    Description: Custom domain API endpoint URL
+    Value: 'https://flowmatrixinnovations.com/api'
+  
+
